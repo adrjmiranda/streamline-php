@@ -1,0 +1,29 @@
+{
+	"name": "adriano/streamline-php",
+	"description": "StreamlinePHP is a lightweight, modular PHP framework focused on simplicity and efficiency for building modern web applications. With intuitive routing, controller management, a customizable templating system, and essential security features, StreamlinePHP provides a flexible foundation for scalable and secure development in pure PHP.",
+	"type": "project",
+	"license": "MIT",
+	"version": "1.0.0",
+	"authors": [
+		{
+			"name": "Adriano Miranda",
+			"email": "adrjmiranda@gmail.com"
+		}
+	],
+	"autoload": {
+		"psr-4": {
+			"Streamline\\": "src/",
+			"App\\": "app/"
+		}
+	},
+	"require": {},
+	"autoload-dev": {
+		"Tests\\": "tests/"
+	},
+	"scripts": {
+		"dev": "php -S localhost:8000 -t public"
+	},
+	"config": {
+		"process-timeout": 0
+	}
+}
