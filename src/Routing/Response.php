@@ -9,7 +9,7 @@ namespace Streamline\Routing;
  * The class also provides functionality for redirecting to a different URI and sending cookies.
  * By default, the response uses the HTTP/1.1 protocol and a 200 OK status code.
  * 
- * @package Src\Routing
+ * @package Streamline\Routing
  */
 class Response
 {

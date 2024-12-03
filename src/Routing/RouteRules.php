@@ -3,9 +3,10 @@
 namespace Streamline\Routing;
 
 /**
- * Class responsible for managing the main system settings
+ * Class responsible for managing 
+ * the main system settings
  * 
- * @package Streamline\Helpers
+ * @package Streamline\Routing
  */
 class RouteRules
 {

@@ -8,7 +8,7 @@ namespace Streamline\Routing;
  * Responsible for encapsulating the details of an HTTP request received by the server, 
  * providing a clean and organized interface to access the request's relevant information.
  *
- * @package Src\Routing
+ * @package Streamline\Routing
  */
 class Request
 {
