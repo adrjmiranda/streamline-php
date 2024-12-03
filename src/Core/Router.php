@@ -58,6 +58,13 @@ class Router
   private array $groupMiddlewares = [];
 
   /**
+   * List of alias for each route
+   * 
+   * @var array
+   */
+  private static array $aliasList = [];
+
+  /**
    * Method responsible for instantiating the Router 
    * class and initializing its properties
    */
@@ -66,6 +73,30 @@ class Router
     $this->request = new Request();
     $this->response = new Response();
     $this->args = [];
+  }
+
+  /**
+   * Method responsible for checking whether a route 
+   * with a given name already exists (alias)
+   * 
+   * @param string $name
+   * @return bool
+   */
+  public static function aliasAlreadyRegistered(string $name): bool
+  {
+    return in_array($name, self::$aliasList);
+  }
+
+  /**
+   * Method responsible for adding a route name 
+   * to the list of route names (alias)
+   * 
+   * @param string $name
+   * @return void
+   */
+  public static function addAlias(string $name): void
+  {
+    self::$aliasList[] = $name;
   }
 
   /**

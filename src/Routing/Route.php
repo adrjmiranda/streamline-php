@@ -3,6 +3,7 @@
 namespace Streamline\Routing;
 
 use Exception;
+use Streamline\Core\Router;
 
 /**
  * Class responsible for representing a route 
@@ -49,6 +50,14 @@ class Route
    * @var array
    */
   private array $middlewares = [];
+
+  /**
+   * The name (alias) of the route
+   * 
+   * @var 
+   */
+  private ?string $alias = null;
+
 
   /**
    * Method responsible for instantiating an 
@@ -144,5 +153,33 @@ class Route
     $this->middlewares[] = $middlewareNamespance;
 
     return $this;
+  }
+
+  /**
+   * Method responsible for defining a alias for the route
+   * 
+   * @param string $name
+   * @throws \Exception
+   * @return void
+   */
+  public function alias(string $name): void
+  {
+    if (Router::aliasAlreadyRegistered($name)) {
+      throw new Exception("Alias '{$name}' already defined.It is not possible to define two routes with the same name (alias)", 500);
+    }
+
+    Router::addAlias($name);
+    $this->alias = $name;
+  }
+
+  /**
+   * Method responsible for returning the route 
+   * name or null if the name has not been defined
+   * 
+   * @return string|null
+   */
+  public function getAlias(): ?string
+  {
+    return $this->alias;
   }
 }

@@ -19,7 +19,7 @@ $router = new Router();
 
 $router->post('/store/[id:%d]', TestController::class . ':store')->addMiddleware(TestMiddleware::class);
 
-$router->get('/', TestController::class . ':index')->addMiddleware(TestMiddleware::class)->addMiddleware(MainMiddleware::class);
+$router->get('/', TestController::class . ':index')->addMiddleware(TestMiddleware::class)->addMiddleware(MainMiddleware::class)->alias('home');
 $router->get('/show', TestController::class . ':show')->addMiddleware(TestMiddleware::class);
 $router->delete('/delete', TestController::class . ':delete')->addMiddleware(TestMiddleware::class);
 
