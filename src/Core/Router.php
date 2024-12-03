@@ -3,6 +3,7 @@
 namespace Streamline\Core;
 
 use Exception;
+use ReflectionFunction;
 use Streamline\Routing\DynamicRouteValidator;
 use Streamline\Routing\Request;
 use Streamline\Routing\Response;
@@ -41,6 +42,20 @@ class Router
    */
   private array $args = [];
 
+  /**
+   * The uri prefix that will be added to 
+   * uri when defining route groups
+   * 
+   * @var string
+   */
+  private string $uriPrefix = '';
+
+  /**
+   * List of middleware added to a route group
+   * 
+   * @var array
+   */
+  private array $groupMiddlewares = [];
 
   /**
    * Method responsible for instantiating the Router 
@@ -74,9 +89,57 @@ class Router
       throw new Exception("The {$method} method does not exist in the {$controllerNamespace} controller", 500);
     }
 
-    $route = new Route($method, $uri, $controllerNamespace, $action);
+    $route = new Route($method, $uri, $controllerNamespace, $action, $this->groupMiddlewares);
 
     return $route;
+  }
+
+  /**
+   * Method responsible for validating whether the function 
+   * passed to the route group is the expected function
+   * 
+   * @param callable $callback
+   * @return bool
+   */
+  private function isValidCallbackInGroup(callable $callback): bool
+  {
+    $reflection = new ReflectionFunction($callback);
+    $parameters = $reflection->getParameters();
+
+    if (count($parameters) !== 1) {
+      return false;
+    }
+
+    if ($parameters[0]->getType()->getName() !== 'Streamline\Core\Router') {
+      return false;
+    }
+
+    return $reflection->getReturnType() && $reflection->getReturnType()->getName() === 'void';
+  }
+
+  /**
+   * Method responsible for defining group 
+   * routes based on a prefix for the uri
+   * 
+   * @param string $uri
+   * @param callable $callback
+   * @return void
+   */
+  public function group(string $uri, callable $callback, array $middlewares = []): void
+  {
+    if (!$this->isValidCallbackInGroup($callback)) {
+      throw new Exception("Callback must be a function that accepts Router and returns void", 500);
+    }
+
+    if (count($middlewares) !== count(array_unique($middlewares))) {
+      throw new Exception("The middleware list added to the route group must have middleware added only once each", 500);
+    }
+
+    $this->groupMiddlewares = $middlewares;
+
+    $this->uriPrefix = $uri;
+    $callback($this);
+    $this->uriPrefix = '';
   }
 
   /**
@@ -115,6 +178,7 @@ class Router
     }
 
     $uri = preg_replace('/\s*/', '', $args[0]);
+    $uri = $this->uriPrefix . $uri;
     $handle = $args[1];
 
     return [$uri, $handle];

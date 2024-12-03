@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Middlewares;
+namespace App\Controllers;
 
 use Streamline\Routing\Request;
 use Streamline\Routing\Response;
 
-class MainMiddleware
+class MainController
 {
   public function index(Request $request, Response $response, array $args): Response
   {
@@ -13,11 +13,6 @@ class MainMiddleware
   }
 
   public function show(Request $request, Response $response, array $args): Response
-  {
-    return $response;
-  }
-
-  public function store(Request $request, Response $response, array $args): Response
   {
     return $response;
   }

@@ -20,7 +20,7 @@ class DynamicRouteValidator
    * @param string $staticUri
    * @return bool
    */
-  private static function dynamicSegmentCorrespondsWithStaticSegment(string $patternUri, string $staticUri): bool
+  public static function dynamicSegmentCorrespondsWithStaticSegment(string $patternUri, string $staticUri): bool
   {
     $patternSegments = UriParser::getUriSegments($patternUri);
     $staticSegments = UriParser::getUriSegments($staticUri);

@@ -5,7 +5,7 @@ namespace App\Middlewares;
 use Streamline\Routing\Request;
 use Streamline\Routing\Response;
 
-class MainMiddleware
+class ThirdMiddleware
 {
   public function index(Request $request, Response $response, array $args): Response
   {

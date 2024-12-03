@@ -59,12 +59,14 @@ class Route
    * @param string $controllerNamespace
    * @param string $action
    */
-  public function __construct(string $method, string $uri, string $controllerNamespace, string $action)
+  public function __construct(string $method, string $uri, string $controllerNamespace, string $action, array $groupMiddlewares = [])
   {
     $this->method = $method;
     $this->uri = $uri;
     $this->controllerNamespace = $controllerNamespace;
     $this->action = $action;
+
+    $this->middlewares = array_merge($this->middlewares, $groupMiddlewares);
   }
 
   /**
@@ -132,6 +134,10 @@ class Route
    */
   public function addMiddleware(string $middlewareNamespance): ?static
   {
+    if (!class_exists($middlewareNamespance)) {
+      throw new Exception("Middleware {$middlewareNamespance} does not exist", 500);
+    }
+
     if (in_array($middlewareNamespance, $this->middlewares)) {
       throw new Exception("Trying to add existing {$middlewareNamespance} middleware", 500);
     }

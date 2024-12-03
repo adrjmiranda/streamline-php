@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Middlewares;
 
 use Streamline\Routing\Request;
 use Streamline\Routing\Response;
