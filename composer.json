@@ -14,7 +14,10 @@
 		"psr-4": {
 			"Streamline\\": "src/",
 			"App\\": "app/"
-		}
+		},
+		"files": [
+			"config/helpers.php"
+		]
 	},
 	"require": {},
 	"autoload-dev": {
