@@ -4,6 +4,11 @@ namespace Streamline\Core;
 
 use Exception;
 
+/**
+ * Class responsible for managing the template system
+ * 
+ * @package Streamline\Core
+ */
 class Template
 {
   /**
@@ -142,5 +147,19 @@ class Template
   private function include(string $partialsName): string
   {
     return $this->render($partialsName);
+  }
+
+  /**
+   * Method responsible for returning the content 
+   * of a text with escaped special characters
+   * 
+   * @param string $content
+   * @param int $flags
+   * @param mixed $encoding
+   * @return string
+   */
+  private function escape(string $content, int $flags = ENT_QUOTES, $encoding = 'UTF-8'): string
+  {
+    return htmlspecialchars($content, $flags, $encoding);
   }
 }
