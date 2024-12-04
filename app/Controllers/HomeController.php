@@ -5,15 +5,12 @@ namespace App\Controllers;
 use Streamline\Routing\Request;
 use Streamline\Routing\Response;
 
-class MainController
+class HomeController
 {
   public function index(Request $request, Response $response, array $args = []): Response
   {
-    return $response;
-  }
+    $response->setBody('Home Controller');
 
-  public function show(Request $request, Response $response, array $args = []): Response
-  {
     return $response;
   }
 }

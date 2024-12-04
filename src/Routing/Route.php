@@ -245,4 +245,21 @@ class Route
 
     throw new Exception("Alias {$alias} has not been defined for any route", 500);
   }
+
+  /**
+   * Method responsible for calling the controller 
+   * method and returning its response
+   * 
+   * @param \Streamline\Routing\Route $route
+   * @param array $args
+   * @return \Streamline\Routing\Response
+   */
+  public function executeControllerAction(Request $request, Response $response, array $args = []): Response
+  {
+    $controllerNamespace = $this->getControllerNamespace();
+    $action = $this->getAction();
+
+    $controller = new $controllerNamespace();
+    return $controller->$action($request, $response, $args);
+  }
 }

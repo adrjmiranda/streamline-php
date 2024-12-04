@@ -70,6 +70,7 @@ class Response
   public function __construct()
   {
     $this->version = "HTTP/1.1";
+    $this->contentType = 'text/html';
     $this->statusCode = 200;
   }
 

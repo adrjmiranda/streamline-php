@@ -4,6 +4,7 @@ namespace Streamline\Core;
 
 use Exception;
 use ReflectionFunction;
+use Streamline\Middlewares\Queue;
 use Streamline\Routing\DynamicRouteValidator;
 use Streamline\Routing\Request;
 use Streamline\Routing\Response;
@@ -126,6 +127,24 @@ class Router
   }
 
   /**
+   * Method responsible for checking whether all middleware 
+   * passed in the middleware list for the route group are valid
+   * 
+   * @param array $middlewares
+   * @return bool|string
+   */
+  private function groupMiddlewareListIsValid(array $middlewares): bool|string
+  {
+    foreach ($middlewares as $middlewareNamespace) {
+      if (!class_exists($middlewareNamespace)) {
+        return $middlewareNamespace;
+      }
+    }
+
+    return true;
+  }
+
+  /**
    * Method responsible for validating whether the function 
    * passed to the route group is the expected function
    * 
@@ -160,6 +179,11 @@ class Router
   {
     if (!$this->isValidCallbackInGroup($callback)) {
       throw new Exception("Callback must be a function that accepts Router and returns void", 500);
+    }
+
+    $groupMiddlewareListIsValidated = $this->groupMiddlewareListIsValid($middlewares);
+    if ($groupMiddlewareListIsValidated !== true) {
+      throw new Exception("The {$groupMiddlewareListIsValidated} middleware does not exist. Aded to the list of middlewares in the route group with uri prefix '{$uri}'", 500);
     }
 
     if (count($middlewares) !== count(array_unique($middlewares))) {
@@ -237,30 +261,13 @@ class Router
   }
 
   /**
-   * Method responsible for calling the controller 
-   * method and returning its response
-   * 
-   * @param \Streamline\Routing\Route $route
-   * @param array $args
-   * @return \Streamline\Routing\Response
-   */
-  private function executeControllerAction(Route $route, array $args = []): Response
-  {
-    $controllerNamespace = $route->getControllerNamespace();
-    $action = $route->getAction();
-
-    $controller = new $controllerNamespace();
-    return $controller->$action($this->request, $this->response, $args);
-  }
-
-  /**
    * Method responsible for executing the route 
    * system sending a response
    * 
    * @throws \Exception
-   * @return never
+   * @return void
    */
-  public function run(): never
+  public function run(): void
   {
     $requestUri = $this->request->getUri();
     $uriKey = StaticRouteValidator::staticRouteAlreadyExists($requestUri) ? $requestUri : DynamicRouteValidator::uriMatchesWithDynamicRoute($requestUri);
@@ -271,11 +278,11 @@ class Router
       $args = DynamicRouteValidator::getDynamicRouteArguments($uriKey, $requestUri);
       $route = RouteCollection::getDynamicRoutes()[$uriKey];
 
-      $response = $this->executeControllerAction($route, $args);
+      $response = (new Queue($route, $this->request, $this->response, $args, $route->getMiddlewares()))->handle();
     } else {
       $route = RouteCollection::getStaticRoutes()[$uriKey];
 
-      $response = $this->executeControllerAction($route);
+      $response = (new Queue($route, $this->request, $this->response, [], $route->getMiddlewares()))->handle();
     }
 
     $response->send();
