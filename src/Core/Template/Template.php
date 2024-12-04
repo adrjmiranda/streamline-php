@@ -1,6 +1,6 @@
 <?php
 
-namespace Streamline\Core;
+namespace Streamline\Core\Template;
 
 use Exception;
 
@@ -42,6 +42,14 @@ class Template
   private null|string $templateContent = null;
 
   /**
+   * List of custom functions that can be 
+   * used in the template
+   * 
+   * @var array
+   */
+  private array $customFunctions = [];
+
+  /**
    * Constructor of the class 
    * responsible for managing templates
    * 
@@ -50,6 +58,25 @@ class Template
   public function __construct(string $viewsPath)
   {
     $this->viewsPath = $viewsPath;
+  }
+
+  private function getFunctionContext(): object
+  {
+    return (object) $this->customFunctions;
+  }
+
+  /**
+   * Method responsible for adding a function to 
+   * the template's list of custom functions
+   * 
+   * @param array $functions
+   * @return void
+   */
+  public function addFunctions(array $functions): void
+  {
+    foreach ($functions as $functionName => $functionInstance) {
+      $this->customFunctions[$functionName] = $functionInstance;
+    }
   }
 
   /**
@@ -90,6 +117,8 @@ class Template
     $templateFile = $this->getTemplateFile($template);
 
     ob_start();
+
+    $call = $this->getFunctionContext();
 
     extract($data);
 
