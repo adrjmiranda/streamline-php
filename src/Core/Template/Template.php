@@ -50,6 +50,21 @@ class Template
   private array $customFunctions = [];
 
   /**
+   * List of sections called within 
+   * the template
+   * 
+   * @var array
+   */
+  private array $sections = [];
+
+  /**
+   * The name of the current section
+   * 
+   * @var null|string
+   */
+  private ?string $currentSection = null;
+
+  /**
    * Constructor of the class 
    * responsible for managing templates
    * 
@@ -190,5 +205,53 @@ class Template
   private function escape(string $content, int $flags = ENT_QUOTES, $encoding = 'UTF-8'): string
   {
     return htmlspecialchars($content, $flags, $encoding);
+  }
+
+  /**
+   * Method responsible for starting a 
+   * section block within the template
+   * 
+   * @param string $name
+   * @throws \Exception
+   * @return void
+   */
+  private function ssection(string $name): void
+  {
+    if (!empty($this->currentSection)) {
+      throw new Exception("A section is already being started: {$this->currentSection}", 500);
+    }
+    $this->currentSection = $name;
+    ob_start();
+  }
+
+  /**
+   * Method responsible for finalizing the 
+   * block of a section within the template
+   * 
+   * @throws \Exception
+   * @return void
+   */
+  private function esection(): void
+  {
+    if (empty($this->currentSection)) {
+      throw new Exception("No section is currently being started", 500);
+    }
+
+    $content = ob_get_clean();
+    $this->sections[$this->currentSection] = $content;
+    $this->currentSection = null;
+  }
+
+  /**
+   * Method responsible for returning 
+   * the content of a section
+   * 
+   * @param string $name
+   * @param string $default
+   * @return string
+   */
+  private function section(string $name, string $default = ''): string
+  {
+    return $this->sections[$name] ?? $default;
   }
 }
