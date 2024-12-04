@@ -10,6 +10,6 @@ use App\Middlewares\HomeMiddleware;
 
 $router = new Router();
 
-$router->get('/', HomeController::class . ':index')->addMiddleware(HomeMiddleware::class)->addMiddleware(MaintenanceMiddleware::class);
+$router->get('/', HomeController::class . ':index')->alias('home');
 
 $router->run();
