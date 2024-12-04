@@ -9,7 +9,9 @@
 </head>
 
 <body>
+  <?= $this->include('partials.navbar') ?>
   <?= $this->block() ?>
+  <?= $this->include('partials.footer') ?>
 </body>
 
 </html>

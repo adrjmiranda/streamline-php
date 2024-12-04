@@ -6,18 +6,63 @@ use Exception;
 
 class Template
 {
+  /**
+   * Base path to view files
+   * 
+   * @var string
+   */
   private string $viewsPath;
+
+  /**
+   * Name of the main template that 
+   * will be extended
+   * 
+   * @var string
+   */
   private string $masterTemplate = '';
+
+  /**
+   * List of data to be passed to 
+   * the main template
+   * 
+   * @var array
+   */
   private array $masterData;
+
+  /**
+   * Template content
+   * 
+   * @var null|string
+   */
   private null|string $templateContent = null;
 
+  /**
+   * Constructor of the class 
+   * responsible for managing templates
+   * 
+   * @param string $viewsPath
+   */
   public function __construct(string $viewsPath)
   {
     $this->viewsPath = $viewsPath;
   }
 
-  private function getTemplateFile(string $templateName): string
+  /**
+   * Method responsible for returning 
+   * the template file path if it exists
+   * 
+   * @param string $templateName
+   * @throws \Exception
+   * @return string|null
+   */
+  private function getTemplateFile(string $templateName): ?string
   {
+    $templateNamePattern = '/^[a-z._-]+$/';
+    if (!preg_match($templateNamePattern, $templateName)) {
+      throw new Exception("The name of a template must contain only lowercase letters, underscores, hyphens or periods", 500);
+    }
+
+    $templateName = str_replace('.', '/', $templateName);
     $tempaltePath = "{$this->viewsPath}/{$templateName}.php";
 
     if (!file_exists($tempaltePath)) {
@@ -27,6 +72,14 @@ class Template
     return $tempaltePath;
   }
 
+  /**
+   * Method responsible for returning the 
+   * rendered content of the template
+   * 
+   * @param string $template
+   * @param array $data
+   * @return string
+   */
   public function render(string $template, array $data = []): string
   {
     $templateFile = $this->getTemplateFile($template);
@@ -54,14 +107,40 @@ class Template
     return $content !== false ? $content : '';
   }
 
+  /**
+   * Method responsible for defining the name 
+   * of the main template that will be extended
+   * 
+   * @param string $masterTemplate
+   * @param array $masterData
+   * @return void
+   */
   private function extends(string $masterTemplate, array $masterData = []): void
   {
     $this->masterTemplate = $masterTemplate;
     $this->masterData = $masterData;
   }
 
+  /**
+   * Method responsible for returning the 
+   * template content within the main template
+   * 
+   * @return string
+   */
   private function block(): string
   {
     return $this->templateContent ?? '';
+  }
+
+  /**
+   * Method responsible for including template 
+   * snippets within a template
+   * 
+   * @param string $partialsName
+   * @return string
+   */
+  private function include(string $partialsName): string
+  {
+    return $this->render($partialsName);
   }
 }
