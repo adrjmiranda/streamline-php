@@ -1,9 +1,12 @@
 <?php
 
-$sum = function (int $a, int $b): int {
-  return $a + $b;
+$baseUrl = function (): string {
+  $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+  $host = $_SERVER['HTTP_HOST'];
+
+  return "{$protocol}://{$host}";
 };
 
 return [
-  'sum' => $sum
+  'baseUrl' => $baseUrl
 ];
