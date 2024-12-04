@@ -7,12 +7,12 @@ use Streamline\Routing\Response;
 
 class MainController
 {
-  public function index(Request $request, Response $response, array $args): Response
+  public function index(Request $request, Response $response, array $args = []): Response
   {
     return $response;
   }
 
-  public function show(Request $request, Response $response, array $args): Response
+  public function show(Request $request, Response $response, array $args = []): Response
   {
     return $response;
   }

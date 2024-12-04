@@ -75,7 +75,7 @@ class Route
     $this->controllerNamespace = $controllerNamespace;
     $this->action = $action;
 
-    $this->middlewares = array_merge($this->middlewares, $groupMiddlewares);
+    $this->middlewares = array_merge($groupMiddlewares, $this->middlewares);
   }
 
   /**
@@ -156,20 +156,62 @@ class Route
   }
 
   /**
+   * Method responsible for replaces arguments with their 
+   * respective values ​​in the uri for a dynamic route where 
+   * an alias has been defined
+   * 
+   * @return string
+   */
+  private function fillsValuesInDynamicUri(string $uri, array $args): string
+  {
+    $uriSegments = UriParser::getUriSegments($uri);
+    $argsKeys = array_keys($args);
+
+    $newUriSegments = [];
+
+    foreach ($uriSegments as $uriSegment) {
+      if (DynamicRouteValidator::containsDynamicSegment($uriSegment)) {
+        $argName = UriParser::getPatternArgName($uriSegment);
+
+        if (!in_array($argName, $argsKeys)) {
+          throw new Exception("It is necessary to pass all parameters to route '{$uri}'. Missing '{$argName}' parameter", 500);
+        }
+
+        $argValue = $args[$argName];
+        $newUriSegments[] = $argValue;
+      } else {
+        $newUriSegments[] = $uriSegment;
+      }
+    }
+
+    return '/' . implode('/', $newUriSegments);
+  }
+
+  /**
    * Method responsible for defining a alias for the route
    * 
    * @param string $name
    * @throws \Exception
    * @return void
    */
-  public function alias(string $name): void
+  public function alias(string $name, array $args = []): void
   {
     if (Router::aliasAlreadyRegistered($name)) {
       throw new Exception("Alias '{$name}' already defined.It is not possible to define two routes with the same name (alias)", 500);
     }
 
+    $uri = $this->getUri();
+
+    if (DynamicRouteValidator::containsDynamicSegment($uri) && empty($args)) {
+      throw new Exception("To define the alias of a dynamic route, you must also define the arguments. Empty arguments passed to '{$uri}'", 500);
+    }
+
     Router::addAlias($name);
     $this->alias = $name;
+
+    if (DynamicRouteValidator::containsDynamicSegment($uri)) {
+      $this->uri = $this->fillsValuesInDynamicUri($uri, $args);
+    }
   }
 
   /**
@@ -181,5 +223,18 @@ class Route
   public function getAlias(): ?string
   {
     return $this->alias;
+  }
+
+  public function getUriFromRouteAlias(string $alias): string
+  {
+    $allRoutes = array_merge(RouteCollection::getStaticRoutes(), RouteCollection::getDynamicRoutes());
+
+    foreach ($allRoutes as $uri => $route) {
+      if ($route->getAlias() === $alias) {
+        return $uri;
+      }
+    }
+
+    throw new Exception("Alias {$alias} has not been defined for any route", 500);
   }
 }

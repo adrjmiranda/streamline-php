@@ -236,8 +236,48 @@ class Router
     }
   }
 
-  public function run()
+  /**
+   * Method responsible for calling the controller 
+   * method and returning its response
+   * 
+   * @param \Streamline\Routing\Route $route
+   * @param array $args
+   * @return \Streamline\Routing\Response
+   */
+  private function executeControllerAction(Route $route, array $args = []): Response
   {
-    dd(RouteCollection::getStaticRoutes(), RouteCollection::getDynamicRoutes());
+    $controllerNamespace = $route->getControllerNamespace();
+    $action = $route->getAction();
+
+    $controller = new $controllerNamespace();
+    return $controller->$action($this->request, $this->response, $args);
+  }
+
+  /**
+   * Method responsible for executing the route 
+   * system sending a response
+   * 
+   * @throws \Exception
+   * @return never
+   */
+  public function run(): never
+  {
+    $requestUri = $this->request->getUri();
+    $uriKey = StaticRouteValidator::staticRouteAlreadyExists($requestUri) ? $requestUri : DynamicRouteValidator::uriMatchesWithDynamicRoute($requestUri);
+
+    if ($uriKey === null) {
+      throw new Exception("Route {$requestUri} not found", 404);
+    } else if (DynamicRouteValidator::containsDynamicSegment($uriKey)) {
+      $args = DynamicRouteValidator::getDynamicRouteArguments($uriKey, $requestUri);
+      $route = RouteCollection::getDynamicRoutes()[$uriKey];
+
+      $response = $this->executeControllerAction($route, $args);
+    } else {
+      $route = RouteCollection::getStaticRoutes()[$uriKey];
+
+      $response = $this->executeControllerAction($route);
+    }
+
+    $response->send();
   }
 }

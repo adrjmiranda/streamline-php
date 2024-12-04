@@ -34,5 +34,17 @@ class UriParser
   {
     return explode(':', str_replace(['[', ']'], '', $segment))[1];
   }
+
+  /**
+   * Method responsible for returns the name of the 
+   * dynamic route argument
+   * 
+   * @param string $segment
+   * @return string
+   */
+  public static function getPatternArgName(string $segment): string
+  {
+    return explode(':', str_replace(['[', ']'], '', $segment))[0];
+  }
 }
 

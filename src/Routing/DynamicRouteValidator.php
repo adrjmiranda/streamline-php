@@ -146,6 +146,56 @@ class DynamicRouteValidator
   }
 
   /**
+   * Method responsible for checking whether a defined 
+   * dynamic route matches the uri sent in the request
+   * 
+   * @param string $uri
+   * @return string|null
+   */
+  public static function uriMatchesWithDynamicRoute(string $uri): string|null
+  {
+    $dynamicKeys = array_keys(RouteCollection::getDynamicRoutes());
+    foreach ($dynamicKeys as $dynamicKey) {
+      if (self::dynamicSegmentCorrespondsWithStaticSegment($dynamicKey, $uri)) {
+        return $dynamicKey;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Method responsible for returning the list of 
+   * arguments that will be passed to the controller 
+   * method
+   * 
+   * @param string $uriPattern
+   * @param string $requestUri
+   * @return array
+   */
+  public static function getDynamicRouteArguments(string $uriPattern, string $requestUri): array
+  {
+    $args = [];
+
+    $patternSegments = UriParser::getUriSegments($uriPattern);
+    $requestUriSegments = UriParser::getUriSegments($requestUri);
+
+    foreach ($patternSegments as $index => $patternSegment) {
+      $requestUriSegment = $requestUriSegments[$index];
+      if (self::containsDynamicSegment($patternSegment)) {
+        $patternIndex = UriParser::getPatternIndex($patternSegment);
+        $argName = UriParser::getPatternArgName($patternSegment);
+
+        if (preg_match(RouteRules::getParametersRules()[$patternIndex], $requestUriSegment)) {
+          $args[$argName] = $requestUriSegment;
+        }
+      }
+    }
+
+    return $args;
+  }
+
+  /**
    * Method responsible for validating and adding a 
    * route to the dynamic route list
    * 

@@ -15,4 +15,3 @@ function dd(mixed ...$values): never
 
   exit;
 }
-;

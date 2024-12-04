@@ -19,17 +19,17 @@ $router = new Router();
 
 $router->post('/store/[id:%d]', TestController::class . ':store')->addMiddleware(TestMiddleware::class);
 
-$router->get('/', TestController::class . ':index')->addMiddleware(TestMiddleware::class)->addMiddleware(MainMiddleware::class)->alias('home');
+$router->get('/', TestController::class . ':index')->addMiddleware(TestMiddleware::class)->addMiddleware(MainMiddleware::class);
 $router->get('/show', TestController::class . ':show')->addMiddleware(TestMiddleware::class);
 $router->delete('/delete', TestController::class . ':delete')->addMiddleware(TestMiddleware::class);
 
 $router->group('/add', function (Router $router): void {
-  $router->post('/users/[name:%t]', TestController::class . ':store')->addMiddleware(TestMiddleware::class);
+  $router->post('/users/[name:%t]', TestController::class . ':store')->addMiddleware(TestMiddleware::class)->alias('user_by_name', ['name' => 'Adriano']);
   $router->post('/users', TestController::class . ':store')->addMiddleware(TestMiddleware::class);
 }, [FirstMiddleware::class, SecondMiddleware::class, ThirdMiddleware::class]);
 
 $router->group('/add', function (Router $router): void {
-  $router->post('/posts/[name:%t]', TestController::class . ':store')->addMiddleware(TestMiddleware::class);
+  $router->post('/posts/[name:%t]/text/[id:%d]', TestController::class . ':store')->addMiddleware(TestMiddleware::class);
   $router->post('/posts', TestController::class . ':store')->addMiddleware(TestMiddleware::class);
 }, [FirstMiddleware::class, SecondMiddleware::class]);
 
