@@ -16,7 +16,7 @@ abstract class Model
 
   abstract protected function getTableName(): string;
 
-  protected function find(int $id): ?array
+  public function find(int $id): ?object
   {
     try {
       $sql = "SELECT * FROM {$this->getTableName()} WHERE id = :id LIMIT  1";
@@ -24,7 +24,7 @@ abstract class Model
       $stmt->bindParam(':id', $id, PDO::PARAM_INT);
       $stmt->execute();
 
-      return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+      return $stmt->fetch() ?: null;
     } catch (PDOException $pDOException) {
       $this->handleException($pDOException, __METHOD__);
 
@@ -32,13 +32,13 @@ abstract class Model
     }
   }
 
-  protected function all(): array
+  public function all(): array
   {
     try {
       $sql = "SELECT * FROM {$this->getTableName()}";
       $stmt = $this->conn->query($sql);
 
-      return $stmt->fetchAll(PDO::FETCH_ASSOC);
+      return $stmt->fetchAll();
     } catch (PDOException $pDOException) {
       $this->handleException($pDOException, __METHOD__);
 
@@ -46,7 +46,7 @@ abstract class Model
     }
   }
 
-  protected function create(array $data): int
+  public function create(array $data): int
   {
     try {
       $fields = array_keys($data);
@@ -66,7 +66,7 @@ abstract class Model
     }
   }
 
-  protected function update(int $id, array $data): bool
+  public function update(int $id, array $data): bool
   {
     try {
       $fields = array_keys($data);
@@ -85,7 +85,7 @@ abstract class Model
     }
   }
 
-  protected function delete(int $id): bool
+  public function delete(int $id): bool
   {
     try {
       $sql = "DELETE FROM {$this->getTableName()} WHERE id = :id";
@@ -100,7 +100,7 @@ abstract class Model
     }
   }
 
-  protected function where(array $conditions): array
+  public function where(array $conditions): array
   {
     try {
       $clauses = [];
@@ -115,7 +115,7 @@ abstract class Model
       $stmt = $this->conn->prepare($sql);
       $stmt->execute($params);
 
-      return $stmt->fetchAll(PDO::FETCH_ASSOC);
+      return $stmt->fetchAll();
     } catch (PDOException $pDOException) {
       $this->handleException($pDOException, __METHOD__);
 
@@ -123,7 +123,7 @@ abstract class Model
     }
   }
 
-  protected function paginate(int $limit, int $offset): array
+  public function paginate(int $limit, int $offset): array
   {
     try {
       $sql = "SELECT * FROM {$this->getTableName()} LIMIT :limit OFFSET :offset";
@@ -132,7 +132,7 @@ abstract class Model
       $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
       $stmt->execute();
 
-      return $stmt->fetchAll(PDO::FETCH_ASSOC);
+      return $stmt->fetchAll();
     } catch (PDOException $pDOException) {
       $this->handleException($pDOException, __METHOD__);
 
@@ -140,7 +140,7 @@ abstract class Model
     }
   }
 
-  protected function count(): ?int
+  public function count(): ?int
   {
     try {
       $sql = "SELECT COUNT(*) FROM {$this->getTableName()}";
@@ -184,13 +184,13 @@ abstract class Model
     $this->conn->rollBack();
   }
 
-  protected function query(string $sql, array $params = []): array
+  public function query(string $sql, array $params = []): array
   {
     try {
       $stmt = $this->conn->prepare($sql);
       $stmt->execute($params);
 
-      return $stmt->fetchAll(PDO::FETCH_ASSOC);
+      return $stmt->fetchAll();
     } catch (PDOException $pDOException) {
       $this->handleException($pDOException, __METHOD__);
 

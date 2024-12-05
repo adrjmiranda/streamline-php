@@ -100,4 +100,26 @@ class RouteCollection
   {
     return StaticRouteValidator::staticRouteAlreadyExists($uri, $method) || DynamicRouteValidator::dynamicRouteAlreadyExists($uri, $method);
   }
+
+  /**
+   * Method responsible for returning 
+   * the list of static routes
+   * 
+   * @return array
+   */
+  public static function getStaticRouteList(): array
+  {
+    return self::$staticRoutes;
+  }
+
+  /**
+   * Method responsible for returning t
+   * he list of dynamic routes
+   * 
+   * @return array
+   */
+  public static function getDynamicRouteList(): array
+  {
+    return self::$dynamicRoutes;
+  }
 }

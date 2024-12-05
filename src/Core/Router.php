@@ -12,6 +12,7 @@ use Streamline\Routing\Route;
 use Streamline\Routing\RouteCollection;
 use Streamline\Routing\RouteRules;
 use Streamline\Routing\StaticRouteValidator;
+use Streamline\Routing\UriParser;
 
 /**
  * Class responsible for managing all application routes and performing 

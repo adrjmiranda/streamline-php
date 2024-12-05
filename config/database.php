@@ -1,7 +1,5 @@
 <?php
 
-use PDO;
-
 $dbHost = $_ENV['DB_HOST'] ?? '';
 $dbPort = $_ENV['DB_PORT'] ?? '';
 $dbName = $_ENV['DB_NAME'] ?? '';

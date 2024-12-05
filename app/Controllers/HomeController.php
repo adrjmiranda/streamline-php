@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\UserModel;
 use Streamline\Routing\Request;
 use Streamline\Routing\Response;
 
@@ -9,8 +10,15 @@ class HomeController extends Controller
 {
   public function index(Request $request, Response $response, array $args = []): Response
   {
+    $userModel = new UserModel();
+    $users = $userModel->query("SELECT id, name, email FROM users");
+
+    // $totalUsers = $userModel->count();
+    // dd($totalUsers);
+
     $response->setBody($this->view('home', [
-      'name' => 'Home'
+      'pageTitle' => 'All Users',
+      'users' => $users
     ]));
 
     return $response;

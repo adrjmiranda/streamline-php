@@ -225,26 +225,6 @@ class Route
     return $this->alias;
   }
 
-  /**
-   * Method responsible for returning the route 
-   * uri based on its alias
-   * 
-   * @param string $alias
-   * @throws \Exception
-   * @return string
-   */
-  public function getUriFromRouteAlias(string $alias): string
-  {
-    $allRoutes = array_merge(RouteCollection::getStaticRoutes(), RouteCollection::getDynamicRoutes());
-
-    foreach ($allRoutes as $uri => $route) {
-      if ($route->getAlias() !== null && $route->getAlias() === $alias) {
-        return $uri;
-      }
-    }
-
-    throw new Exception("Alias {$alias} has not been defined for any route", 500);
-  }
 
   /**
    * Method responsible for calling the controller 

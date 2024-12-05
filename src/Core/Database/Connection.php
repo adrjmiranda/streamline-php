@@ -36,7 +36,7 @@ class Connection
    */
   private static function getConfig(string $key): mixed
   {
-    $data = require_once rootPath() . '/app/config/database.php';
+    $data = require rootPath() . '/config/database.php';
 
     return $data[$key] ?? null;
   }
@@ -55,7 +55,7 @@ class Connection
       $dbName = self::getConfig('dbName');
       $dbCharset = self::getConfig('dbCharset');
 
-      $dsn = sprintf("mysql:host=%s;port=%d;dbname=%s;charset=%s", $dbHost, $dbPort, $dbName, $dbCharset);
+      $dsn = sprintf("mysql:host=%s;port=%s;dbname=%s;charset=%s", $dbHost, $dbPort, $dbName, $dbCharset);
       $dbUser = self::getConfig('dbUser');
       $dbPass = self::getConfig('dbPass');
       $options = self::getConfig('options');
@@ -64,6 +64,7 @@ class Connection
         self::$conn = new PDO($dsn, $dbUser, $dbPass, $options);
       } catch (PDOException $pDOException) {
         // TODO: ...
+        dd($pDOException->getMessage());
       }
     }
 

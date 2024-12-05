@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\UserModel;
 use Streamline\Routing\Request;
 use Streamline\Routing\Response;
 
@@ -18,18 +19,78 @@ class UserController extends Controller
 
   public function store(Request $request, Response $response, array $args = []): Response
   {
-    $data = $request->getBody();
+    $name = $request->getOnlyBodyParameters('name');
+    $email = $request->getOnlyBodyParameters('email');
+    $password = $request->getOnlyBodyParameters('password');
 
-    dd($data);
+    $userModel = new UserModel();
+    if (
+      $userModel->create([
+        'name' => $name,
+        'email' => $email,
+        'password' => password_hash($password, PASSWORD_DEFAULT)
+      ])
+    ) {
+      dd('User created successfully!');
+    } else {
+      dd('Error');
+    }
+
+    return $response;
+  }
+
+  public function edit(Request $request, Response $response, array $args = []): Response
+  {
+    $id = $args['id'];
+    $userModel = new UserModel();
+
+    $userData = $userModel->find((int) $id);
+
+    $response->setBody($this->view('edit', [
+      'pageTitle' => 'Edit User',
+      'user' => $userData
+    ]));
+
+    return $response;
+  }
+
+  public function update(Request $request, Response $response, array $args = []): Response
+  {
+    $id = $args['id'];
+    $userModel = new UserModel();
+
+    $userData = $userModel->find((int) $id);
+
+    $name = $request->getOnlyBodyParameters('name');
+    $email = $request->getOnlyBodyParameters('email');
+    $password = $request->getOnlyBodyParameters('password');
+
+    if (
+      $userModel->update((int) $id, [
+        'name' => $name,
+        'email' => $email,
+        'password' => password_hash($password, PASSWORD_DEFAULT)
+      ])
+    ) {
+      dd('User updated successfully!');
+    } else {
+      dd('Error trying to update user!');
+    }
 
     return $response;
   }
 
   public function show(Request $request, Response $response, array $args = []): Response
   {
-    $data = $request->getBody();
+    $id = $args['id'];
+    $userModel = new UserModel();
 
-    dd($data);
+    $userData = $userModel->find((int) $id);
+
+    $response->setBody($this->view('user', [
+      'pageTitle' => 'User Data',
+      'user' => $userData
+    ]));
 
     return $response;
   }
