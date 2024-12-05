@@ -20,9 +20,9 @@ class StaticRouteValidator
    * @param string $dynamicUri
    * @return bool
    */
-  public static function hasConflictWithStaticRoute(string $dynamicUri): bool
+  public static function hasConflictWithStaticRoute(string $dynamicUri, string $method): bool
   {
-    $staticKeys = array_keys(RouteCollection::getStaticRoutes());
+    $staticKeys = array_keys(RouteCollection::getStaticRoutes($method));
 
     foreach ($staticKeys as $staticKey) {
       if (DynamicRouteValidator::dynamicSegmentCorrespondsWithStaticSegment($dynamicUri, $staticKey)) {
@@ -40,9 +40,9 @@ class StaticRouteValidator
    * @param string $uri
    * @return bool
    */
-  public static function staticRouteAlreadyExists(string $uri): bool
+  public static function staticRouteAlreadyExists(string $uri, string $method): bool
   {
-    $staticKeys = array_keys(RouteCollection::getStaticRoutes());
+    $staticKeys = array_keys(RouteCollection::getStaticRoutes($method));
 
     return in_array($uri, $staticKeys);
   }
@@ -57,12 +57,12 @@ class StaticRouteValidator
    * @throws \Exception
    * @return void
    */
-  public static function validateAndAddRoute(string $uri, Route $route): void
+  public static function validateAndAddRoute(string $uri, string $method, Route $route): void
   {
-    if (DynamicRouteValidator::hasConflictWithDynamicRoute($uri)) {
+    if (DynamicRouteValidator::hasConflictWithDynamicRoute($uri, $method)) {
       throw new Exception("Static URI {$uri} in conflict with dynamic URI already created", 500);
     }
 
-    RouteCollection::addStaticRoute($uri, $route);
+    RouteCollection::addStaticRoute($uri, $method, $route);
   }
 }

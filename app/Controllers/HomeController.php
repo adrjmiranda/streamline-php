@@ -10,7 +10,6 @@ class HomeController extends Controller
   public function index(Request $request, Response $response, array $args = []): Response
   {
     $response->setBody($this->view('home', [
-      'title' => 'Home Page',
       'name' => 'Home'
     ]));
 

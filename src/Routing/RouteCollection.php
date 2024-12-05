@@ -25,16 +25,31 @@ class RouteCollection
   private static array $dynamicRoutes = [];
 
   /**
+   * Method responsible for adding a route to a route list
+   * 
+   * @param string $uri
+   * @param string $method
+   * @param \Streamline\Routing\Route $route
+   * @param array $list
+   * @return void
+   */
+  private static function addRoute(string $uri, string $method, Route $route, array &$routeList): void
+  {
+    $routeList[$method][$uri] = $route;
+  }
+
+  /**
    * Method responsible for adding a route 
    * to the list of static routes
    * 
    * @param string $uri
+   * @param string $method
    * @param \Streamline\Routing\Route $route
    * @return void
    */
-  public static function addStaticRoute(string $uri, Route $route): void
+  public static function addStaticRoute(string $uri, string $method, Route $route): void
   {
-    self::$staticRoutes[$uri] = $route;
+    self::addRoute($uri, $method, $route, self::$staticRoutes);
   }
 
   /**
@@ -42,12 +57,13 @@ class RouteCollection
    * to the dynamic route list
    * 
    * @param string $uri
+   * @param string $method
    * @param \Streamline\Routing\Route $route
    * @return void
    */
-  public static function addDynamicRoute(string $uri, Route $route): void
+  public static function addDynamicRoute(string $uri, string $method, Route $route): void
   {
-    self::$dynamicRoutes[$uri] = $route;
+    self::addRoute($uri, $method, $route, self::$dynamicRoutes);
   }
 
   /**
@@ -56,9 +72,9 @@ class RouteCollection
    * 
    * @return array
    */
-  public static function getStaticRoutes(): array
+  public static function getStaticRoutes(string $method): array
   {
-    return self::$staticRoutes;
+    return self::$staticRoutes[$method] ?? [];
   }
 
   /**
@@ -67,9 +83,9 @@ class RouteCollection
    * 
    * @return array
    */
-  public static function getDynamicRoutes(): array
+  public static function getDynamicRoutes(string $method): array
   {
-    return self::$dynamicRoutes;
+    return self::$dynamicRoutes[$method] ?? [];
   }
 
   /**
@@ -80,8 +96,8 @@ class RouteCollection
    * @param string $uri
    * @return bool
    */
-  public static function uriAlreadyRegistered(string $uri): bool
+  public static function uriAlreadyRegistered(string $uri, string $method): bool
   {
-    return StaticRouteValidator::staticRouteAlreadyExists($uri) || DynamicRouteValidator::dynamicRouteAlreadyExists($uri);
+    return StaticRouteValidator::staticRouteAlreadyExists($uri, $method) || DynamicRouteValidator::dynamicRouteAlreadyExists($uri, $method);
   }
 }

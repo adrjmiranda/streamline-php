@@ -20,10 +20,20 @@ class Connection
    */
   private static ?PDO $conn = null;
 
+  /**
+   * Class constructor. 
+   * Set to prevent direct instance
+   */
   private function __construct()
   {
   }
 
+  /**
+   * Method responsible for returning a specific configuration
+   * 
+   * @param string $key
+   * @return mixed
+   */
   private static function getConfig(string $key): mixed
   {
     $data = require_once rootPath() . '/app/config/database.php';
@@ -53,71 +63,10 @@ class Connection
       try {
         self::$conn = new PDO($dsn, $dbUser, $dbPass, $options);
       } catch (PDOException $pDOException) {
-        //throw $th;
-        // TODO: add to log
+        // TODO: ...
       }
     }
 
     return self::$conn;
-  }
-
-  /**
-   * Executes a database query with parameters
-   * 
-   * @param string $sql
-   * @param array $params
-   * @return array
-   */
-  public static function query(string $sql, array $params = []): array
-  {
-    $stmt = self::get()->prepare($sql);
-    $stmt->execute($params);
-
-    return $stmt->fetchAll();
-  }
-
-  /**
-   * Executes an SQL command (INSERT, UPDATE, DELETE)
-   * 
-   * @param string $sql
-   * @param array $params
-   * @return int
-   */
-  public static function execute(string $sql, array $params = []): int
-  {
-    $stmt = self::get()->prepare($sql);
-    $stmt->execute($params);
-
-    return $stmt->rowCount();
-  }
-
-  /**
-   * Start a transaction
-   * 
-   * @return void
-   */
-  public static function beginTransaction(): void
-  {
-    self::get()->beginTransaction();
-  }
-
-  /**
-   * Confirm the transaction
-   * 
-   * @return void
-   */
-  public static function commit(): void
-  {
-    self::get()->commit();
-  }
-
-  /**
-   * Undo the transaction
-   * 
-   * @return void
-   */
-  public static function rollBack(): void
-  {
-    self::get()->rollBack();
   }
 }

@@ -118,9 +118,9 @@ class DynamicRouteValidator
    * @param string $staticUri
    * @return bool
    */
-  public static function hasConflictWithDynamicRoute(string $staticUri): bool
+  public static function hasConflictWithDynamicRoute(string $staticUri, string $method): bool
   {
-    $dynamicKeys = array_keys(RouteCollection::getDynamicRoutes());
+    $dynamicKeys = array_keys(RouteCollection::getDynamicRoutes($method));
 
     foreach ($dynamicKeys as $dynamicKey) {
       if (self::dynamicSegmentCorrespondsWithStaticSegment($dynamicKey, $staticUri)) {
@@ -138,9 +138,9 @@ class DynamicRouteValidator
    * @param string $uri
    * @return bool
    */
-  public static function dynamicRouteAlreadyExists(string $uri): bool
+  public static function dynamicRouteAlreadyExists(string $uri, string $method): bool
   {
-    $dynamicKeys = array_keys(RouteCollection::getDynamicRoutes());
+    $dynamicKeys = array_keys(RouteCollection::getDynamicRoutes($method));
 
     return in_array($uri, $dynamicKeys);
   }
@@ -152,9 +152,9 @@ class DynamicRouteValidator
    * @param string $uri
    * @return string|null
    */
-  public static function uriMatchesWithDynamicRoute(string $uri): string|null
+  public static function uriMatchesWithDynamicRoute(string $uri, string $method): string|null
   {
-    $dynamicKeys = array_keys(RouteCollection::getDynamicRoutes());
+    $dynamicKeys = array_keys(RouteCollection::getDynamicRoutes($method));
     foreach ($dynamicKeys as $dynamicKey) {
       if (self::dynamicSegmentCorrespondsWithStaticSegment($dynamicKey, $uri)) {
         return $dynamicKey;
@@ -204,7 +204,7 @@ class DynamicRouteValidator
    * @throws \Exception
    * @return void
    */
-  public static function validateAndAddRoute(string $uri, Route $route): void
+  public static function validateAndAddRoute(string $uri, string $method, Route $route): void
   {
     if (!self::dynamicSegmentPatternIsCorrect($uri)) {
       throw new Exception("Error trying to set uri {$uri}. Default setting for dynamic url parameter incorrect. Ex: [id:%d]", 500);
@@ -214,10 +214,10 @@ class DynamicRouteValidator
       throw new Exception("Error trying to set uri {$uri}. Non-mandatory parameters can only be defined at the end of routes", 500);
     }
 
-    if (StaticRouteValidator::hasConflictWithStaticRoute($uri)) {
+    if (StaticRouteValidator::hasConflictWithStaticRoute($uri, $method)) {
       throw new Exception("Dynamic URI {$uri} conflicting with static URI already created", 500);
     }
 
-    RouteCollection::addDynamicRoute($uri, $route);
+    RouteCollection::addDynamicRoute($uri, $method, $route);
   }
 }

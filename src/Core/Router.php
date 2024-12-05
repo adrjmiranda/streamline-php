@@ -118,7 +118,7 @@ class Router
     }
 
     if (!method_exists($controllerNamespace, $action)) {
-      throw new Exception("The {$method} method does not exist in the {$controllerNamespace} controller", 500);
+      throw new Exception("The {$action} method does not exist in the {$controllerNamespace} controller", 500);
     }
 
     $route = new Route($method, $uri, $controllerNamespace, $action, $this->groupMiddlewares);
@@ -210,9 +210,9 @@ class Router
     $route = $this->createRoute($method, $uri, $handle);
 
     if (DynamicRouteValidator::containsDynamicSegment($uri)) {
-      DynamicRouteValidator::validateAndAddRoute($uri, $route);
+      DynamicRouteValidator::validateAndAddRoute($uri, $method, $route);
     } else {
-      StaticRouteValidator::validateAndAddRoute($uri, $route);
+      StaticRouteValidator::validateAndAddRoute($uri, $method, $route);
     }
 
     return $route;
@@ -270,17 +270,18 @@ class Router
   public function run(): void
   {
     $requestUri = $this->request->getUri();
-    $uriKey = StaticRouteValidator::staticRouteAlreadyExists($requestUri) ? $requestUri : DynamicRouteValidator::uriMatchesWithDynamicRoute($requestUri);
+    $requestMethod = $this->request->getMethod();
+    $uriKey = StaticRouteValidator::staticRouteAlreadyExists($requestUri, $requestMethod) ? $requestUri : DynamicRouteValidator::uriMatchesWithDynamicRoute($requestUri, $requestMethod);
 
     if ($uriKey === null) {
       throw new Exception("Route {$requestUri} not found", 404);
     } else if (DynamicRouteValidator::containsDynamicSegment($uriKey)) {
       $args = DynamicRouteValidator::getDynamicRouteArguments($uriKey, $requestUri);
-      $route = RouteCollection::getDynamicRoutes()[$uriKey];
+      $route = RouteCollection::getDynamicRoutes($requestMethod)[$uriKey];
 
       $response = (new Queue($route, $this->request, $this->response, $args, $route->getMiddlewares()))->handle();
     } else {
-      $route = RouteCollection::getStaticRoutes()[$uriKey];
+      $route = RouteCollection::getStaticRoutes($requestMethod)[$uriKey];
 
       $response = (new Queue($route, $this->request, $this->response, [], $route->getMiddlewares()))->handle();
     }
