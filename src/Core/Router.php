@@ -4,15 +4,16 @@ namespace Streamline\Core;
 
 use Exception;
 use ReflectionFunction;
+use Streamline\Helpers\Logger;
 use Streamline\Middlewares\Queue;
 use Streamline\Routing\DynamicRouteValidator;
 use Streamline\Routing\Request;
 use Streamline\Routing\Response;
 use Streamline\Routing\Route;
 use Streamline\Routing\RouteCollection;
+use Streamline\Routing\RouteError;
 use Streamline\Routing\RouteRules;
 use Streamline\Routing\StaticRouteValidator;
-use Streamline\Routing\UriParser;
 
 /**
  * Class responsible for managing all application routes and performing 
@@ -67,6 +68,34 @@ class Router
   private static array $aliasList = [];
 
   /**
+   * Logger instance
+   * 
+   * @var null|Logger
+   */
+  private ?Logger $logger = null;
+
+  /**
+   * Code for error content
+   * 
+   * @var int
+   */
+  private int $errorContentCode;
+
+  /**
+   * The error controller namespace
+   * 
+   * @var int
+   */
+  private string $errorContentControllerNamespace;
+
+  /**
+   * The error handler method
+   * 
+   * @var string
+   */
+  private string $errorContentControllerAction;
+
+  /**
    * Method responsible for instantiating the Router 
    * class and initializing its properties
    */
@@ -75,6 +104,8 @@ class Router
     $this->request = new Request();
     $this->response = new Response();
     $this->args = [];
+
+    $this->logger = new Logger(rootPath() . '/logs/route.log');
   }
 
   /**
@@ -261,6 +292,32 @@ class Router
     }
   }
 
+  public function setErrorContent(int $errorCode, string $handle): void
+  {
+    [$errorContentControllerNamespace, $errorContentControllerAction] = explode(':', $handle);
+
+    if (!class_exists($errorContentControllerNamespace)) {
+      throw new Exception("Error controller {$errorContentControllerNamespace} does not exist", 500);
+    }
+
+    if (!method_exists($errorContentControllerNamespace, $errorContentControllerAction)) {
+      throw new Exception("The {$errorContentControllerAction} method does not exist in the {$errorContentControllerNamespace} controller", 500);
+    }
+
+    $this->errorContentControllerNamespace = $errorContentControllerNamespace;
+    $this->errorContentControllerAction = $errorContentControllerAction;
+
+    $this->errorContentCode = $errorCode;
+
+    RouteError::addErrorRoute($errorCode, $errorContentControllerNamespace, $errorContentControllerAction);
+  }
+
+  private function getErrorContent(int $errorCode): Response
+  {
+    $content = RouteError::getErrorContent($errorCode, $this->request, $this->response, $this->args);
+    return $content;
+  }
+
   /**
    * Method responsible for executing the route 
    * system sending a response
@@ -270,23 +327,28 @@ class Router
    */
   public function run(): void
   {
-    $requestUri = $this->request->getUri();
-    $requestMethod = $this->request->getMethod();
-    $uriKey = StaticRouteValidator::staticRouteAlreadyExists($requestUri, $requestMethod) ? $requestUri : DynamicRouteValidator::uriMatchesWithDynamicRoute($requestUri, $requestMethod);
+    try {
+      $requestUri = $this->request->getUri();
+      $requestMethod = $this->request->getMethod();
+      $uriKey = StaticRouteValidator::staticRouteAlreadyExists($requestUri, $requestMethod) ? $requestUri : DynamicRouteValidator::uriMatchesWithDynamicRoute($requestUri, $requestMethod);
 
-    if ($uriKey === null) {
-      throw new Exception("Route {$requestUri} not found", 404);
-    } else if (DynamicRouteValidator::containsDynamicSegment($uriKey)) {
-      $args = DynamicRouteValidator::getDynamicRouteArguments($uriKey, $requestUri);
-      $route = RouteCollection::getDynamicRoutes($requestMethod)[$uriKey];
+      if ($uriKey === null) {
+        throw new Exception("Route {$requestUri} not found", 404);
+      } else if (DynamicRouteValidator::containsDynamicSegment($uriKey)) {
+        $args = DynamicRouteValidator::getDynamicRouteArguments($uriKey, $requestUri);
+        $route = RouteCollection::getDynamicRoutes($requestMethod)[$uriKey];
 
-      $response = (new Queue($route, $this->request, $this->response, $args, $route->getMiddlewares()))->handle();
-    } else {
-      $route = RouteCollection::getStaticRoutes($requestMethod)[$uriKey];
+        $response = (new Queue($route, $this->request, $this->response, $args, $route->getMiddlewares()))->handle();
+      } else {
+        $route = RouteCollection::getStaticRoutes($requestMethod)[$uriKey];
 
-      $response = (new Queue($route, $this->request, $this->response, [], $route->getMiddlewares()))->handle();
+        $response = (new Queue($route, $this->request, $this->response, [], $route->getMiddlewares()))->handle();
+      }
+
+      $response->send();
+    } catch (Exception $exception) {
+      $this->logger->error($exception->getMessage());
+      $this->getErrorContent($exception->getCode())->send();
     }
-
-    $response->send();
   }
 }

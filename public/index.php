@@ -1,5 +1,7 @@
 <?php
 
+use App\Controllers\ErrorController;
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(rootPath());
@@ -11,6 +13,9 @@ use Streamline\Core\Router;
 use App\Controllers\HomeController;
 
 $router = new Router();
+
+$router->setErrorContent(404, ErrorController::class . ':notFound');
+$router->setErrorContent(500, ErrorController::class . ':serverError');
 
 $router->get('/', HomeController::class . ':index')->alias('home');
 $router->get('/user/register', UserController::class . ':register')->alias('user_register');
