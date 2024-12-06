@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Streamline\Core\Database\Model;
+use Streamline\Core\Model;
 
 class UserModel extends Model
 {

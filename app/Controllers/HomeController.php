@@ -13,9 +13,6 @@ class HomeController extends Controller
     $userModel = new UserModel();
     $users = $userModel->query("SELECT id, name, email FROM users");
 
-    // $totalUsers = $userModel->count();
-    // dd($totalUsers);
-
     $response->setBody($this->view('home', [
       'pageTitle' => 'All Users',
       'users' => $users

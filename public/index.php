@@ -20,4 +20,6 @@ $router->get('/user/[id:%d]', UserController::class . ':show');
 $router->get('/user/edit/[id:%d]', UserController::class . ':edit');
 $router->post('/user/edit/[id:%d]', UserController::class . ':update');
 
+$router->get('/user/delete/[id:%d]', UserController::class . ':delete');
+
 $router->run();

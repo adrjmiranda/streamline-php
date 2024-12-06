@@ -94,4 +94,18 @@ class UserController extends Controller
 
     return $response;
   }
+
+  public function delete(Request $request, Response $response, array $args = []): Response
+  {
+    $id = (int) $args['id'];
+    $userModel = new UserModel();
+
+    if ($userModel->delete($id)) {
+      dd('User removed successfully!');
+    } else {
+      dd('Error');
+    }
+
+    return $response;
+  }
 }

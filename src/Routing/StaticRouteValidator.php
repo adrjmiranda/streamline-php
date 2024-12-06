@@ -18,6 +18,7 @@ class StaticRouteValidator
    * in a dynamic route
    * 
    * @param string $dynamicUri
+   * @param string $method
    * @return bool
    */
   public static function hasConflictWithStaticRoute(string $dynamicUri, string $method): bool
@@ -38,6 +39,7 @@ class StaticRouteValidator
    * already been defined in the list of static routes
    * 
    * @param string $uri
+   * @param string $method
    * @return bool
    */
   public static function staticRouteAlreadyExists(string $uri, string $method): bool
@@ -53,6 +55,7 @@ class StaticRouteValidator
    * routes
    * 
    * @param string $uri
+   * @param string $method
    * @param \Streamline\Routing\Route $route
    * @throws \Exception
    * @return void

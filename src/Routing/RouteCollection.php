@@ -70,6 +70,7 @@ class RouteCollection
    * Method responsible for returning 
    * the list of static routes
    * 
+   * @param string $method
    * @return array
    */
   public static function getStaticRoutes(string $method): array
@@ -81,6 +82,7 @@ class RouteCollection
    * Method responsible for returning 
    * the list of dynamic routes
    * 
+   * @param string $method
    * @return array
    */
   public static function getDynamicRoutes(string $method): array
@@ -94,6 +96,7 @@ class RouteCollection
    * list or in the static route list
    * 
    * @param string $uri
+   * @param string $method
    * @return bool
    */
   public static function uriAlreadyRegistered(string $uri, string $method): bool

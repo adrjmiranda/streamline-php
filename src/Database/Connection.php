@@ -1,6 +1,6 @@
 <?php
 
-namespace Streamline\Core\Database;
+namespace Streamline\Database;
 
 use PDO;
 use PDOException;
