@@ -292,6 +292,15 @@ class Router
     }
   }
 
+  /**
+   * Method responsible for defining the controller 
+   * and how it will handle error content
+   * 
+   * @param int $errorCode
+   * @param string $handle
+   * @throws \Exception
+   * @return void
+   */
   public function setErrorContent(int $errorCode, string $handle): void
   {
     [$errorContentControllerNamespace, $errorContentControllerAction] = explode(':', $handle);
@@ -312,7 +321,13 @@ class Router
     RouteError::addErrorRoute($errorCode, $errorContentControllerNamespace, $errorContentControllerAction);
   }
 
-  private function getErrorContent(int $errorCode): Response
+  /**
+   * Method responsible for returning content according to the error code
+   * 
+   * @param int $errorCode
+   * @return \Streamline\Routing\Response
+   */
+  public function getErrorContent(int $errorCode): Response
   {
     $content = RouteError::getErrorContent($errorCode, $this->request, $this->response, $this->args);
     return $content;

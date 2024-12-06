@@ -5,6 +5,7 @@ namespace Streamline\Core;
 use PDO;
 use PDOException;
 use Streamline\Database\Connection;
+use Streamline\Helpers\Logger;
 
 /**
  * Class responsible for providing standard 
@@ -22,12 +23,20 @@ abstract class Model
   protected PDO $conn;
 
   /**
+   * The Logger instance
+   * 
+   * @var null|Logger 
+   */
+  private ?Logger $logger = null;
+
+  /**
    * Method responsible for initializing an instance 
    * of the class and obtaining value for $conn
    */
   public function __construct()
   {
     $this->conn = Connection::get();
+    $this->logger = new Logger(rootPath() . '/logs/database.log');
   }
 
   /**
@@ -286,6 +295,8 @@ abstract class Model
    */
   protected function handleException(PDOException $pDOException, string $method): void
   {
-    // TODO: ...
+    $this->logger->error("Error when calling method {method}.\n" . $pDOException->getMessage(), [
+      'method' => $method
+    ]);
   }
 }

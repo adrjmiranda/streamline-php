@@ -3,6 +3,7 @@
 namespace Streamline\Core\Template;
 
 use Exception;
+use Streamline\Helpers\Logger;
 
 /**
  * Class responsible for managing the template system
@@ -65,6 +66,13 @@ class Template
   private ?string $currentSection = null;
 
   /**
+   * Logger instance
+   * 
+   * @var null|Logger
+   */
+  private ?Logger $logger = null;
+
+  /**
    * Constructor of the class 
    * responsible for managing templates
    * 
@@ -73,6 +81,7 @@ class Template
   public function __construct(string $viewsPath)
   {
     $this->viewsPath = $viewsPath;
+    $this->logger = new Logger(rootPath() . '/logs/template.log');
   }
 
   private function getFunctionContext(): object
@@ -125,35 +134,39 @@ class Template
    * 
    * @param string $template
    * @param array $data
-   * @return string
+   * @return null|string
    */
-  public function render(string $template, array $data = []): string
+  public function render(string $template, array $data = []): ?string
   {
-    $templateFile = $this->getTemplateFile($template);
+    try {
+      $templateFile = $this->getTemplateFile($template);
 
-    ob_start();
+      ob_start();
 
-    $call = $this->getFunctionContext();
+      $call = $this->getFunctionContext();
 
-    extract($data);
+      extract($data);
 
-    require_once $templateFile;
+      require_once $templateFile;
 
-    $content = ob_get_contents();
+      $content = ob_get_contents();
 
-    ob_end_clean();
+      ob_end_clean();
 
-    if (!empty($this->masterTemplate)) {
-      $this->templateContent = $content;
-      $allData = array_merge($data, $this->masterData);
-      $masterTemplateName = $this->masterTemplate;
+      if (!empty($this->masterTemplate)) {
+        $this->templateContent = $content;
+        $allData = array_merge($data, $this->masterData);
+        $masterTemplateName = $this->masterTemplate;
 
-      $this->masterTemplate = '';
+        $this->masterTemplate = '';
 
-      return $this->render($masterTemplateName, $allData);
+        return $this->render($masterTemplateName, $allData);
+      }
+
+      return $content !== false ? $content : '';
+    } catch (Exception $exception) {
+      $this->logger->error($exception->getMessage());
     }
-
-    return $content !== false ? $content : '';
   }
 
   /**
