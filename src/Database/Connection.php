@@ -2,6 +2,7 @@
 
 namespace Streamline\Database;
 
+use Exception;
 use PDO;
 use PDOException;
 use Streamline\Helpers\Logger;
@@ -20,13 +21,6 @@ class Connection
    * @var null|PDO
    */
   private static ?PDO $conn = null;
-
-  /**
-   * The Logger instance
-   * 
-   * @var null|Logger 
-   */
-  private static ?Logger $logger = null;
 
   /**
    * Class constructor. 
@@ -71,7 +65,8 @@ class Connection
       try {
         self::$conn = new PDO($dsn, $dbUser, $dbPass, $options);
       } catch (PDOException $pDOException) {
-        self::$logger->error($pDOException->getMessage());
+        (new Logger(rootPath() . '/logs/database.php'))->error($pDOException->getMessage(), []);
+        throw new Exception("Error Processing Request", 500);
       }
     }
 

@@ -166,6 +166,7 @@ class Template
       return $content !== false ? $content : '';
     } catch (Exception $exception) {
       $this->logger->error($exception->getMessage());
+      throw new Exception("Error Processing Request", 500);
     }
   }
 

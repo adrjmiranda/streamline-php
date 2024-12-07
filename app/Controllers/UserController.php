@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
+use Streamline\Core\SessionManager;
 use Streamline\Routing\Request;
 use Streamline\Routing\Response;
 
@@ -105,6 +106,45 @@ class UserController extends Controller
     } else {
       dd('Error');
     }
+
+    return $response;
+  }
+
+  public function login(Request $request, Response $response, array $args = []): Response
+  {
+    $response->setBody($this->view('login', [
+      'pageTitle' => 'Login User'
+    ]));
+
+    return $response;
+  }
+
+  public function auth(Request $request, Response $response, array $args = []): Response
+  {
+    $email = $request->getOnlyBodyParameters('email');
+    $password = $request->getOnlyBodyParameters('password');
+
+    $userModel = new UserModel();
+    $userByEmail = $userModel->query('SELECT * FROM users WHERE email = :email LIMIT 1', [
+      'email' => $email
+    ]);
+
+    if (!empty($userByEmail)) {
+      $user = $userByEmail[0];
+
+      if (password_verify($password, $user->password)) {
+        $session = new SessionManager();
+        $session->set('user', [
+          'id' => $user->id,
+          'name' => $user->name,
+          'email' => $user->email
+        ]);
+
+        $response->redirect('/')->send();
+      }
+    }
+
+    $response->redirect('/user/login')->send();
 
     return $response;
   }

@@ -32,7 +32,7 @@ class Response
    * 
    * @var mixed
    */
-  private mixed $body;
+  private mixed $body = '';
 
   /**
    * Response cookies.

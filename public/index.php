@@ -27,4 +27,7 @@ $router->post('/user/edit/[id:%d]', UserController::class . ':update');
 
 $router->get('/user/delete/[id:%d]', UserController::class . ':delete');
 
+$router->get('/user/login', UserController::class . ':login')->alias('user_login');
+$router->post('/user/auth', UserController::class . ':auth')->alias('user_auth');
+
 $router->run();
