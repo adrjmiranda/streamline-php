@@ -18,7 +18,7 @@ rel="stylesheet" href="<?= ($call->baseUrl)() ?>/assets/css/styles.css"> <?php $
   </div>
 
   <div class="mb-3">
-    <button type="submit" class="btn btn-warning">Register</button>
+    <button type="submit" class="btn btn-warning">Entrar</button>
   </div>
 </form>
 

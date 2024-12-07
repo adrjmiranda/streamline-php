@@ -88,6 +88,17 @@ class Response
   }
 
   /**
+   * Method responsible for returning the 
+   * content of the response body
+   * 
+   * @return mixed
+   */
+  public function getBody(): mixed
+  {
+    return $this->body;
+  }
+
+  /**
    * Adds a value to the cookie list
    * 
    * @param string $name

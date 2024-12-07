@@ -8,3 +8,4 @@ composer.phar
 .env
 
 /logs/
+/cache/
