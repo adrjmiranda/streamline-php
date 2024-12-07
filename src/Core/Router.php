@@ -137,13 +137,21 @@ class Router
    * 
    * @param string $method
    * @param string $uri
-   * @param string $handle
+   * @param string|array $handle
    * @throws \Exception
    * @return Route
    */
-  private function createRoute(string $method, string $uri, string $handle): ?Route
+  private function createRoute(string $method, string $uri, string|array $handle): ?Route
   {
-    [$controllerNamespace, $action] = explode(':', $handle);
+    if (is_array($handle)) {
+      if (count($handle) !== 2) {
+        throw new Exception("The format when passed in an array must be [ControllerClass, action]", 500);
+      }
+
+      [$controllerNamespace, $action] = $handle;
+    } else {
+      [$controllerNamespace, $action] = explode(':', $handle);
+    }
 
     if (!class_exists($controllerNamespace)) {
       throw new Exception("Controller {$controllerNamespace} does not exist", 500);
@@ -237,7 +245,7 @@ class Router
    * @param string $handle
    * @return \Streamline\Routing\Route
    */
-  private function add(string $method, string $uri, string $handle): Route
+  private function add(string $method, string $uri, string|array $handle): Route
   {
     $route = $this->createRoute($method, $uri, $handle);
 
@@ -266,6 +274,7 @@ class Router
 
     $uri = preg_replace('/\s*/', '', $args[0]);
     $uri = $this->uriPrefix . $uri;
+
     $handle = $args[1];
 
     return [$uri, $handle];

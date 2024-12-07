@@ -22,7 +22,7 @@ $router = new Router();
 $router->setErrorContent(404, ErrorController::class . ':notFound');
 $router->setErrorContent(500, ErrorController::class . ':serverError');
 
-$router->get('/', HomeController::class . ':index')->addMiddleware(CacheMiddleware::class)->addMiddleware(StoreCacheMiddleware::class)->alias('home');
+$router->get('/', [HomeController::class, 'index'])->addMiddleware(CacheMiddleware::class)->addMiddleware(StoreCacheMiddleware::class)->alias('home');
 $router->get('/user/register', UserController::class . ':register')->alias('user_register');
 $router->post('/user/register', UserController::class . ':store')->alias('user_store');
 
