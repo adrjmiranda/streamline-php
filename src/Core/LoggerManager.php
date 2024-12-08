@@ -3,6 +3,7 @@
 namespace Streamline\Core;
 
 use Streamline\Helpers\Logger;
+use Streamline\Helpers\Utilities;
 
 /**
  * Class responsible for providing a single
@@ -27,7 +28,7 @@ class LoggerManager
   public static function getLogger(): Logger
   {
     if (!self::$instance) {
-      self::$instance = new Logger(rootPath() . '/logs/app.log');
+      self::$instance = new Logger(Utilities::rootPath() . '/logs/app.log');
     }
 
     return self::$instance;

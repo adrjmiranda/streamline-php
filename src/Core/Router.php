@@ -5,6 +5,7 @@ namespace Streamline\Core;
 use Exception;
 use ReflectionFunction;
 use Streamline\Helpers\Logger;
+use Streamline\Helpers\Utilities;
 use Streamline\Middlewares\Queue;
 use Streamline\Routing\DynamicRouteValidator;
 use Streamline\Routing\Request;
@@ -105,7 +106,7 @@ class Router
     $this->response = new Response();
     $this->args = [];
 
-    $this->logger = new Logger(rootPath() . '/logs/route.log');
+    $this->logger = new Logger(Utilities::rootPath() . '/logs/route.log');
   }
 
   /**

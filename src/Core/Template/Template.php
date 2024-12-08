@@ -4,6 +4,7 @@ namespace Streamline\Core\Template;
 
 use Exception;
 use Streamline\Helpers\Logger;
+use Streamline\Helpers\Utilities;
 
 /**
  * Class responsible for managing the template system
@@ -81,7 +82,7 @@ class Template
   public function __construct(string $viewsPath)
   {
     $this->viewsPath = $viewsPath;
-    $this->logger = new Logger(rootPath() . '/logs/template.log');
+    $this->logger = new Logger(Utilities::rootPath() . '/logs/template.log');
   }
 
   private function getFunctionContext(): object

@@ -6,6 +6,7 @@ use PDO;
 use PDOException;
 use Streamline\Database\Connection;
 use Streamline\Helpers\Logger;
+use Streamline\Helpers\Utilities;
 
 /**
  * Class responsible for providing standard 
@@ -36,7 +37,7 @@ abstract class Model
   public function __construct()
   {
     $this->conn = Connection::get();
-    $this->logger = new Logger(rootPath() . '/logs/database.log');
+    $this->logger = new Logger(Utilities::rootPath() . '/logs/database.log');
   }
 
   /**

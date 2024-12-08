@@ -5,7 +5,9 @@ namespace Streamline\Database;
 use Exception;
 use PDO;
 use PDOException;
+use Streamline\Helpers\DBConfig;
 use Streamline\Helpers\Logger;
+use Streamline\Helpers\Utilities;
 
 /**
  * 
@@ -38,7 +40,7 @@ class Connection
    */
   private static function getConfig(string $key): mixed
   {
-    $data = require rootPath() . '/config/database.php';
+    $data = DBConfig::get();
 
     return $data[$key] ?? null;
   }
@@ -65,7 +67,7 @@ class Connection
       try {
         self::$conn = new PDO($dsn, $dbUser, $dbPass, $options);
       } catch (PDOException $pDOException) {
-        (new Logger(rootPath() . '/logs/database.php'))->error($pDOException->getMessage(), []);
+        (new Logger(Utilities::rootPath() . '/logs/database.log'))->error($pDOException->getMessage(), []);
         throw new Exception("Error Processing Request", 500);
       }
     }

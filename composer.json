@@ -14,10 +14,7 @@
 		"psr-4": {
 			"Streamline\\": "src/",
 			"App\\": "app/"
-		},
-		"files": [
-			"config/helpers.php"
-		]
+		}
 	},
 	"require": {
 		"vlucas/phpdotenv": "^5.6"
