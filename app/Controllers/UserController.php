@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\UserModel;
 use Streamline\Core\SessionManager;
+use Streamline\Core\Validator;
 use Streamline\Routing\Request;
 use Streamline\Routing\Response;
 
@@ -60,11 +61,20 @@ class UserController extends Controller
     $id = $args['id'];
     $userModel = new UserModel();
 
-    $userData = $userModel->find((int) $id);
 
     $name = $request->getOnlyBodyParameters('name');
     $email = $request->getOnlyBodyParameters('email');
     $password = $request->getOnlyBodyParameters('password');
+
+    $validator = new Validator($request);
+    $validatedData = $validator->validations(
+      [
+        'name' => 'required|min:3|max:255',
+        'email' => 'required|email|unique:users',
+        'password' => 'required|min:5|max:20',
+      ]
+    );
+    dd($validatedData);
 
     if (
       $userModel->update((int) $id, [
