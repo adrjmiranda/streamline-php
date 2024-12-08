@@ -311,9 +311,17 @@ class Router
    * @throws \Exception
    * @return void
    */
-  public function setErrorContent(int $errorCode, string $handle): void
+  public function setErrorContent(int $errorCode, string|array $handle): void
   {
-    [$errorContentControllerNamespace, $errorContentControllerAction] = explode(':', $handle);
+    if (is_array($handle)) {
+      if (count($handle) !== 2) {
+        throw new Exception("The format when passed in an array must be [ControllerClass, action]", 500);
+      }
+
+      [$errorContentControllerNamespace, $errorContentControllerAction] = $handle;
+    } else {
+      [$errorContentControllerNamespace, $errorContentControllerAction] = explode(':', $handle);
+    }
 
     if (!class_exists($errorContentControllerNamespace)) {
       throw new Exception("Error controller {$errorContentControllerNamespace} does not exist", 500);

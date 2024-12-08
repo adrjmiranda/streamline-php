@@ -37,7 +37,7 @@ Each of these features is detailed in the [project's Wiki]().
 
 ## Exemplo Básico
 
-#### Aqui está um exemplo de uso básico do framework:
+#### Here is an example of basic usage of the framework:
 
 ```php
 <?php
@@ -76,10 +76,10 @@ $router->run();
 
 ## Licença
 
-Este projeto é licenciado sob a [Licença MIT](LICENSE).
+This project is licensed under [Licença MIT](LICENSE).
 
 ---
 
 ## Autor
 
-Desenvolvido com 💻 e ☕ por [Adriano Miranda](https://github.com/adrjmiranda).
+Developed with 💻 and ☕ by [Adriano Miranda](https://github.com/adrjmiranda).
