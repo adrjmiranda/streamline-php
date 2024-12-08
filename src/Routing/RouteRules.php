@@ -17,6 +17,8 @@ class RouteRules
    */
   public static function getEnabledMethods(): array
   {
+    // TODO: add default enable method list
+
     return [
       'GET',
       'POST',
