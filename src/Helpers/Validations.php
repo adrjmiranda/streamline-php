@@ -3,6 +3,7 @@
 namespace Streamline\Helpers;
 
 use PDO;
+use Streamline\Core\SessionManager;
 use Streamline\Database\Connection;
 
 /**
@@ -126,6 +127,32 @@ trait Validations
     }
 
     $this->processedData[$field] = $var;
+    return true;
+  }
+
+  /**
+   * Method responsible for checking whether the csrf 
+   * token defined in the session is the same as the 
+   * one sent in the request
+   * 
+   * @param string $field
+   * @param array $params
+   * @return bool
+   */
+  private function csrf(string $field, array $params): bool
+  {
+    $csrfToken = $this->processedVar($this->request->getOnlyBodyParameters($field));
+
+    $session = new SessionManager();
+
+    $sessionCsrfToken = $session->get($field);
+
+    if ($csrfToken !== $sessionCsrfToken) {
+      $this->processedData[$field] = null;
+      return false;
+    }
+
+    $this->processedData[$field] = $csrfToken;
     return true;
   }
 }
