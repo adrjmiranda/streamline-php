@@ -179,7 +179,7 @@ class Template
    * @param array $masterData
    * @return void
    */
-  private function extends(string $masterTemplate, array $masterData = []): void
+  public function extends(string $masterTemplate, array $masterData = []): void
   {
     $this->masterTemplate = $masterTemplate;
     $this->masterData = $masterData;
@@ -191,7 +191,7 @@ class Template
    * 
    * @return string
    */
-  private function block(): string
+  public function block(): string
   {
     return $this->templateContent ?? '';
   }
@@ -203,7 +203,7 @@ class Template
    * @param string $partialsName
    * @return string
    */
-  private function include(string $partialsName): string
+  public function include(string $partialsName): string
   {
     return $this->render($partialsName);
   }
@@ -217,7 +217,7 @@ class Template
    * @param mixed $encoding
    * @return string
    */
-  private function escape(string $content, int $flags = ENT_QUOTES, $encoding = 'UTF-8'): string
+  public function escape(string $content, int $flags = ENT_QUOTES, $encoding = 'UTF-8'): string
   {
     return htmlspecialchars($content, $flags, $encoding);
   }
@@ -230,7 +230,7 @@ class Template
    * @throws \Exception
    * @return void
    */
-  private function ssection(string $name): void
+  public function ssection(string $name): void
   {
     if (!empty($this->currentSection)) {
       throw new Exception("A section is already being started: {$this->currentSection}", 500);
@@ -246,7 +246,7 @@ class Template
    * @throws \Exception
    * @return void
    */
-  private function esection(): void
+  public function esection(): void
   {
     if (empty($this->currentSection)) {
       throw new Exception("No section is currently being started", 500);
@@ -265,7 +265,7 @@ class Template
    * @param string $default
    * @return string
    */
-  private function section(string $name, string $default = ''): string
+  public function section(string $name, string $default = ''): string
   {
     return $this->sections[$name] ?? $default;
   }

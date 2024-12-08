@@ -18,7 +18,7 @@ class Utilities
   public static function rootPath(): string
   {
     $currentDir = __DIR__;
-    $projectRoot = dirname($currentDir, 3);
+    $projectRoot = dirname($currentDir, 5);
 
     return $projectRoot;
   }

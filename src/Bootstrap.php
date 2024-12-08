@@ -21,11 +21,10 @@ class Bootstrap
    */
   public static function initialize(): void
   {
-    $rootPath = Utilities::rootPath();
-    $dotenvPath = $rootPath . '/.env';
+    $dotenvPath = Utilities::rootPath() . '/.env';
 
     if (file_exists($dotenvPath)) {
-      $dotenv = Dotenv::createImmutable($dotenvPath);
+      $dotenv = Dotenv::createImmutable(Utilities::rootPath());
       $dotenv->load();
     }
   }
