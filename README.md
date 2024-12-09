@@ -22,14 +22,14 @@ composer create-project adrjmiranda/streamline-php
 
 ### Streamline PHP currently offers the following systems and tools:
 
-- [Route System]()
-- [Template System]()
-- [Session Management]()
-- [Cache System]()
-- [Log System]()
-- [Validations]()
-- [Middleware]()
-- [Query Builder with Database]()
+- [Route System](https://github.com/adrjmiranda/streamline-php/wiki/Route-System)
+- [Template System](https://github.com/adrjmiranda/streamline-php/wiki/Template-System)
+- [Session Management](https://github.com/adrjmiranda/streamline-php/wiki/Session-Management)
+- [Cache System](https://github.com/adrjmiranda/streamline-php/wiki/Cache-System)
+- [Log System](https://github.com/adrjmiranda/streamline-php/wiki/Log-System)
+- [Validations](https://github.com/adrjmiranda/streamline-php/wiki/Validations)
+- [Middleware](https://github.com/adrjmiranda/streamline-php/wiki/Middleware)
+- [Query Builder with Database](https://github.com/adrjmiranda/streamline-php/wiki/Query-Builder-with-Database)
 
 Each of these features is detailed in the [project's Wiki]().
 
@@ -58,7 +58,6 @@ $router = new Router();
 $router->get('/', HomeController::class . ':index')->addMiddleware(CacheMiddleware::class)->alias('home_page');
 
 $router->run();
-
 ```
 
 ---
