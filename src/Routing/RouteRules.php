@@ -13,22 +13,17 @@ class RouteRules
   /**
    * Method responsible for providing the list of allowed HTTP methods.
    * 
+   * @param array $customHttpMethods
    * @return array
    */
-  public static function getEnabledMethods(): array
+  public static function getEnabledMethods(array $customHttpMethods = []): array
   {
-    // TODO: add default enable method list
-
-    return [
+    return $customHttpMethods ?: [
       'GET',
       'POST',
       'PUT',
       'DELETE',
-      // 'PATCH',
-      // 'HEAD',
-      // 'OPTIONS',
-      // 'TRACE',
-      // 'CONNECT'
+      'PATCH'
     ];
   }
 

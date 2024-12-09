@@ -47,6 +47,13 @@ class Router
   private array $args = [];
 
   /**
+   * List of custom HTTP methods
+   * 
+   * @var array
+   */
+  private array $customHttpMethods = [];
+
+  /**
    * The uri prefix that will be added to 
    * uri when defining route groups
    * 
@@ -107,6 +114,17 @@ class Router
     $this->args = [];
 
     $this->logger = new Logger(Utilities::rootPath() . '/logs/route.log');
+  }
+
+  /**
+   * Method responsible for defining list of enabled http methods
+   * 
+   * @param array $customHttpMethods
+   * @return void
+   */
+  public function setCustomHttpMethods(array $customHttpMethods): void
+  {
+    $this->customHttpMethods = $customHttpMethods;
   }
 
   /**
@@ -293,7 +311,7 @@ class Router
   public function __call(string $method, array $args): ?Route
   {
     $method = strtoupper($method);
-    if (in_array($method, RouteRules::getEnabledMethods())) {
+    if (in_array($method, RouteRules::getEnabledMethods($this->customHttpMethods))) {
       [$uri, $handle] = $this->getUriAndHandle($args);
 
       return $this->add($method, $uri, $handle);
