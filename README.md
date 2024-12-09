@@ -31,7 +31,7 @@ composer create-project adrjmiranda/streamline-php
 - [Middleware](https://github.com/adrjmiranda/streamline-php/wiki/Middleware)
 - [Query Builder with Database](https://github.com/adrjmiranda/streamline-php/wiki/Query-Builder-with-Database)
 
-Each of these features is detailed in the [project's Wiki]().
+Each of these features is detailed in the [project's Wiki](https://github.com/adrjmiranda/streamline-php/wiki).
 
 ---
 
