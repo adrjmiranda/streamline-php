@@ -2,6 +2,9 @@
 
 namespace Streamline\Routing;
 
+use InvalidArgumentException;
+use RuntimeException;
+
 /**
  * 
  * This class is responsible for constructing and sending HTTP responses.
@@ -236,7 +239,32 @@ class Response
       header("$key: $value");
     }
 
-    echo $this->body;
+    $bodyContent = match ($this->contentType) {
+      'text/html' => $this->body,
+      'application/json' => $this->encodeJsonBody($this->body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+      default => throw new InvalidArgumentException("Unsupported content type: {$this->contentType}"),
+    };
+
+    echo $bodyContent;
     exit;
+  }
+
+  /**
+   * Method responsible for returning content in json format after processing
+   * 
+   * @param mixed $body
+   * @param int $options
+   * @throws \RuntimeException
+   * @return string
+   */
+  private function encodeJsonBody(mixed $body, int $options = 0): string
+  {
+    $json = json_encode($body, $options);
+
+    if ($json === false) {
+      throw new RuntimeException("Failed to encode JSON: " . json_last_error_msg());
+    }
+
+    return $json;
   }
 }
